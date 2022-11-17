@@ -15,9 +15,11 @@ public class AvatarBodySelection : MonoBehaviour
 
     private GameObject bodyInstance;
 
-    private int currentBodyIndex = 0;
+    public int currentBodyIndex = 0;
 
-    private bool disableInputHandling = false;
+    public bool disableInputHandling = false;
+
+    public bool rayHit = false;
 
     // Start is called before the first frame update
     void Start()
@@ -29,28 +31,49 @@ public class AvatarBodySelection : MonoBehaviour
     void Update()
     {
         int nextBodyIndex = CalcNextBodyIndex();
-        if(nextBodyIndex != -1 && IsLookingAtMirror())
+        rayHit = IsLookingAtMirror(); //calling this here to see rayHit in the UI
+        if (nextBodyIndex != -1 && rayHit)
             AttachBodyPrefab(nextBodyIndex);
     }
 
     int CalcNextBodyIndex() // -1 means invalid aka "do nothing"
     {
+        //retrieve horizontal input value from the joystick (of the right controller)
+        Vector2 stickPosition = switchBodyAction.action.ReadValue<Vector2>();
+        float horizontalStickPosition = stickPosition.x; // -1.0 <-> 0.0 <-> 1.0
 
-        Vector2 switchInput = switchBodyAction.action.ReadValue<Vector2>();
+        //reset and wait for input
+        if(horizontalStickPosition == 0)
+        {
+            disableInputHandling = false;
+            return -1;
+        }
 
-        int bodySelectionIndex = Mathf.RoundToInt(switchInput.x);
-        Debug.Log(bodySelectionIndex);
-        //currentBodyIndex = currentBodyIndex + bodySelectionIndex;
-        Debug.Log(currentBodyIndex + bodySelectionIndex);
+        //prevent continuous dress changes while the joystick keeps being held to either side
+        if (disableInputHandling == true) {
+            return -1;
+        }
 
+        //user is holding stick to the right
+        if (horizontalStickPosition > 0 && currentBodyIndex < bodyPrefabs.Count - 1)
+        {
+            currentBodyIndex = currentBodyIndex + 1;
+        }
+        
+        //user is holding stick to the left
+        if (horizontalStickPosition < 0 && currentBodyIndex >= 1)
+        {
+            currentBodyIndex = currentBodyIndex - 1;
+        }
 
-        return currentBodyIndex + bodySelectionIndex;
+        //prevent continuous dress changes while the joystick keeps being held to either side
+        disableInputHandling = true;
+        return currentBodyIndex;
     }
 
     bool IsLookingAtMirror()
     {
-
-        bool rayHit = Physics.Raycast(headTransform.position, headTransform.forward, 20, mirrorLayer);
+        rayHit = Physics.Raycast(headTransform.position, headTransform.forward, 20, mirrorLayer.value);
         return rayHit;
     }
 

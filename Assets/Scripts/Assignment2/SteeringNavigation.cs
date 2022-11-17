@@ -13,7 +13,19 @@ public class SteeringNavigation : MonoBehaviour
 
     // bExercise 2.4
     // What are advantages and disadvantages of each technique? Which one do you personally prefer?
-    // Sup-I like the right hand controller directed steering better as I am able to gaze around the world and enjoy the environment. In comparison to the gaze directed steering, I found it confusing often times and has a feeling of discomfort. Needing to focus on the direction you would want to go can be annoying.  
+    // Advantages and disadvantages of gaze directed steering
+    // + precise control for distant targets because of implicit aiming at the target
+    // - relatively slow
+    // - Can be confusing often times and has a feeling of discomfort.
+    // - Needing to focus on the direction you would want to go can be annoying.
+    // Advantages and disadvantages of controller directed steering
+    // + you can go backwards more easily
+    // + agile controls
+    // + people already know it from video games
+    // - can cause motion sickness with abprubt changes
+    // Our opinion:
+    // We like the right hand controller directed steering better as we are able to gaze around the world and enjoy the environment.
+
 
 
 
